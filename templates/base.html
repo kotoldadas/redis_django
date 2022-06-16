@@ -1,0 +1,38 @@
+{% load static %} {% load i18n %}
+
+<html lang="tr">
+  <head>
+    <!--============= Scripts Section Starts Here =============-->
+    <link
+      href="{% static 'bootstrap/css/bootstrap.min.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="{% static 'css/style.css' %}"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    {% block extra_css %} {% endblock %}
+  </head>
+  <body>
+    <!--============= Header Section Starts Here =============-->
+    {% block header %} {% include 'partials/header.html' %} {% endblock %}
+    <!--============= Header Section Ends Here =============-->
+
+    {% block content %} {% endblock %}
+    <!--============= Footer Section Starts Here =============-->
+    {% block footer %} {% include 'partials/footer.html' %} {% endblock %}
+
+    <!--============= Footer Section Ends Here =============-->
+
+    {% block extra_script %} {% endblock %}
+
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

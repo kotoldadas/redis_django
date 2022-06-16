@@ -1,6 +1,8 @@
+from time import sleep
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.core.cache import cache
 from django.conf import settings
+from .models import Recipe
 
 CACHE_TTL = getattr(settings, "CACHE_TTL", DEFAULT_TIMEOUT)
 
@@ -14,3 +16,9 @@ def get_recipes():
         recipes = Recipe.objects.all()  # type: ignore
         cache.set("recipes", recipes, timeout=CACHE_TTL)
     return recipes
+
+
+def tmp():
+    print("starting")
+    sleep(5)
+    print("finished")
