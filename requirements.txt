@@ -3,3 +3,5 @@ django-redis
 django-rq
 redis
 sqlparse
+channels
+channels-redis

@@ -15,10 +15,20 @@
 
 <nav class="navbar navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand">CLAY</a>
-    <form class="d-flex">
+      <a class="navbar-brand" href="{% url 'main'%}">Cache Example</a>
+      <a class="navbar-brand" href="{% url 'students'%}">Students</a>
+      <a class="navbar-brand" href="{% url 'test'%}">Test</a>
+      <a class="navbar-brand" href="{% url 'other'%}">Results</a>
+
+        {% if user.is_authenticated %}
+        <a href={% url 'logout' %}>Log Out</a>
+        {% else %}
+        <a href={% url 'login' %}>Log in</a>
+
+        {% endif %}
+        <form class="d-flex">
       <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success" type="submit">Search</button>
+      <button class="btn btn-outline-success" >Search</button>
     </form>
   </div>
 </nav>

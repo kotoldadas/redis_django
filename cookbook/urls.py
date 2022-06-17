@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import cache, sync, queued
+from .views import cache_view
 
 
-urlpatterns = [path("", cache), path("sync/", sync), path("queued/", queued)]
+urlpatterns = [path("", cache_view, name="main")]

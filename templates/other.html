@@ -1,0 +1,10 @@
+
+{% extends "base.html" %} {% block content %}
+
+    {% for task in tasks %}
+    <h1> id => {{ task.id}}</h1>
+    <h2> result =>{{task.result}}</h2>
+    <hr>
+    {% endfor %}
+
+{% endblock %}
