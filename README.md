@@ -93,7 +93,7 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-konmutları koşturulur. Modeller oluştuktan sonra verileri kaydetmek için
+komutları koşturulur. Modeller oluştuktan sonra verileri kaydetmek için
 
 ```
 python manage.py loaddata cookbook
