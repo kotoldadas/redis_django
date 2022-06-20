@@ -3,112 +3,112 @@
 Bu uygulama, django nun senkron özelliğinden dolayı hesaplama maliyeti çok olan işlemlerin redisgibi araçlar yardımı ile paralel bir şekilde işlenmesini amaçlamaktadır.
 Kullanıcılar görevlerin durumunu ayrı bir sekmeden direk olarak veya konsol üzerinden websocket bağlantısı yardımı ile haberdar olabilirler.
 
-# Kurulum
-
-Uygulamada kullanılan kütüphaneler, paralel işlemler için _fork_ fonksiyonu kullandıkları için
-sadece Linux işletim sisteminde çalışabilmektedir.
-
-## Sanal Ortam Kurulumu (virtualenv)
-
-Proje kaynak kodunun koşturulabilmesi için gereken kütüphaneler sanal ortama kurulmalıdır.
-Sanal ortam oluşturmak için virtualenv kütüphanesi kullanılabilir.
-
-```
-pip install virtualenv
-```
-
-Sanal ortam kurulumu için
-
-```
-virtualenv venv
-```
-
-komutu koşturularak "venv" ismi ile bir ortam oluşturulur.
-
-## Ortamın Aktive Edilmesi
-
-Linux işletim sistemi için
-
-```
-source venv/bin/activate
-```
-
-komutu koşturulur.
-
-## Kütüphaneleri Yüklenmesi
-
-İlgili kütüphaneleri yüklemek için
-
-```
-pip install -r requirements.txt
-```
-
-komutu koşturulur.
-
-## Sunucunun Ayağa Kaldırılması
-
-Projeyi ayağa kaldırmak için
-
-```
-python manage.py runserver
-```
-
-komutu koşturulur.
-Bu komutu koşturmadan önce kurulan sanal ortamın aktif olduğundan ve proje dizininde bulunulduğundan emin olunmalıdır.
-
-## Redis Kurulumu
-
-### Local e Yüklemek
-
-Redis i yüklemek için şu komutla koşturulur.
-
-```
-curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
-
-echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
-
-sudo apt-get update
-sudo apt-get install redis
-```
-
-Redis yüklendikten sonra arka planda çalışması için
-
-```
-redis-server --daemonize yes
-```
-
-### Docker ile Redis Kurulumu
-
-```
-sudo docker run --name redis_django -p 6379:6379 -d redis
-```
-
-komutu koşturulur.
-
-## Worker ların Başlatılması
-
-Uygulamadaki işlem maliyeti yüksek görevlerin paralel hesaplanmasını sağlamak için ayrı Processler (Worker) ayağa kaldırılması gerekir. Bunun için
-```
-python manage.py rqworker
-```
-komutu koşturulur.
-
-## Test Verilerinin Yüklenmesi
-
-Uygulamadaki özelliklerin test edilmesi için hazır veriler bulunmaktadır. Bu verileri veritabanına eklemek için önce modeller veritabanında oluşturulmalıdır. Bunun için
-```
-python manage.py makemigrations
-python manage.py migrate
-```
-
-komutları koşturulur. Modeller oluştuktan sonra verileri kaydetmek için
-
-```
-python manage.py loaddata cookbook
-```
-komutu koşturulur.
-
-# Docker ile Koşturulması
+<!-- # Kurulum -->
+<!---->
+<!-- Uygulamada kullanılan kütüphaneler, paralel işlemler için _fork_ fonksiyonu kullandıkları için -->
+<!-- sadece Linux işletim sisteminde çalışabilmektedir. -->
+<!---->
+<!-- ## Sanal Ortam Kurulumu (virtualenv) -->
+<!---->
+<!-- Proje kaynak kodunun koşturulabilmesi için gereken kütüphaneler sanal ortama kurulmalıdır. -->
+<!-- Sanal ortam oluşturmak için virtualenv kütüphanesi kullanılabilir. -->
+<!---->
+<!-- ``` -->
+<!-- pip install virtualenv -->
+<!-- ``` -->
+<!---->
+<!-- Sanal ortam kurulumu için -->
+<!---->
+<!-- ``` -->
+<!-- virtualenv venv -->
+<!-- ``` -->
+<!---->
+<!-- komutu koşturularak "venv" ismi ile bir ortam oluşturulur. -->
+<!---->
+<!-- ## Ortamın Aktive Edilmesi -->
+<!---->
+<!-- Linux işletim sistemi için -->
+<!---->
+<!-- ``` -->
+<!-- source venv/bin/activate -->
+<!-- ``` -->
+<!---->
+<!-- komutu koşturulur. -->
+<!---->
+<!-- ## Kütüphaneleri Yüklenmesi -->
+<!---->
+<!-- İlgili kütüphaneleri yüklemek için -->
+<!---->
+<!-- ``` -->
+<!-- pip install -r requirements.txt -->
+<!-- ``` -->
+<!---->
+<!-- komutu koşturulur. -->
+<!---->
+<!-- ## Sunucunun Ayağa Kaldırılması -->
+<!---->
+<!-- Projeyi ayağa kaldırmak için -->
+<!---->
+<!-- ``` -->
+<!-- python manage.py runserver -->
+<!-- ``` -->
+<!---->
+<!-- komutu koşturulur. -->
+<!-- Bu komutu koşturmadan önce kurulan sanal ortamın aktif olduğundan ve proje dizininde bulunulduğundan emin olunmalıdır. -->
+<!---->
+<!-- ## Redis Kurulumu -->
+<!---->
+<!-- ### Local e Yüklemek -->
+<!---->
+<!-- Redis i yüklemek için şu komutla koşturulur. -->
+<!---->
+<!-- ``` -->
+<!-- curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg -->
+<!---->
+<!-- echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list -->
+<!---->
+<!-- sudo apt-get update -->
+<!-- sudo apt-get install redis -->
+<!-- ``` -->
+<!---->
+<!-- Redis yüklendikten sonra arka planda çalışması için -->
+<!---->
+<!-- ``` -->
+<!-- redis-server --daemonize yes -->
+<!-- ``` -->
+<!---->
+<!-- ### Docker ile Redis Kurulumu -->
+<!---->
+<!-- ``` -->
+<!-- sudo docker run --name redis_django -p 6379:6379 -d redis -->
+<!-- ``` -->
+<!---->
+<!-- komutu koşturulur. -->
+<!---->
+<!-- ## Worker ların Başlatılması -->
+<!---->
+<!-- Uygulamadaki işlem maliyeti yüksek görevlerin paralel hesaplanmasını sağlamak için ayrı Processler (Worker) ayağa kaldırılması gerekir. Bunun için -->
+<!-- ``` -->
+<!-- python manage.py rqworker -->
+<!-- ``` -->
+<!-- komutu koşturulur. -->
+<!---->
+<!-- ## Test Verilerinin Yüklenmesi -->
+<!---->
+<!-- Uygulamadaki özelliklerin test edilmesi için hazır veriler bulunmaktadır. Bu verileri veritabanına eklemek için önce modeller veritabanında oluşturulmalıdır. Bunun için -->
+<!-- ``` -->
+<!-- python manage.py makemigrations -->
+<!-- python manage.py migrate -->
+<!-- ``` -->
+<!---->
+<!-- komutları koşturulur. Modeller oluştuktan sonra verileri kaydetmek için -->
+<!---->
+<!-- ``` -->
+<!-- python manage.py loaddata cookbook -->
+<!-- ``` -->
+<!-- komutu koşturulur. -->
+<!---->
+# Docker ile Kurulumu
 
 docker-compose ise şu komutların koşturulması yeterli olacaktır.
 ```
