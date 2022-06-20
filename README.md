@@ -108,6 +108,8 @@ project
 │
 └─── chat                               -- Websocket konfigürasyon dosyalarının bulunduğu klasör
 │
+└─── cookbook                           -- cache örneği için oluşturulan model ve view kodlarının bulunduğu klasör
+│
 └─── redis_tutorial                     -- Uygulamanın asıl ayarlarının bulunduğu klasör
 │
 └─── staticfiles                        -- Sunucudaki static dosyaların (css, javascript, fonts vb) bulunduğu klasör
@@ -116,7 +118,11 @@ project
 │    └─── fonts                          
 │    └─── js                            
 │
+└─── students                           -- Maliyeti yüksek bir işlemi simule etmek için oluşturulan model ve fonksiyonların bulunduğu klasör
+│
 └─── templates                          -- html uzantılı dosyaların bulunduğu klasör
+│
+└─── users                              -- CustomUser modelinin ve Task modelinin bulunduğu klasör
 │
 │   README.md                           -- Uygulama dökümanasyonunun bulunduğu dosya
 │   requirements.txt                    -- Gerekli kütüphaneleri belirtildiği dosya
