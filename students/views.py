@@ -24,7 +24,7 @@ def test(req):
     return redirect("main")
 
 
-def other(req):
+def result(req):
 
     tasks: list[Task] = Task.objects.filter(status=Task.StatusChoices.FINISHED)  # type: ignore
     queue = django_rq.get_queue()

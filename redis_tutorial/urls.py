@@ -21,7 +21,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("cookbook.urls")),
     path("students/", include("students.urls")),
+    path("result/", include("users.urls")),
     path("django-rq/", include("django_rq.urls")),
-    path("chat/", include("chat.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
 ]
