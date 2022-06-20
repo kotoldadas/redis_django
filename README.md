@@ -450,4 +450,21 @@ Sadece kullanıcı girişi sağlanırsa bağlantı kurulur.
 {% endif %}
 ```
 
+## Cache Örneği
+
+Recipe modelindeki verilerin cache den okunma örneği
+
+```
+def get_recipes():
+    if "recipes" in cache:
+        recipes = cache.get("recipes")
+        print(f"already in cache with ttl => {cache.ttl('recipes')}")
+    else:
+        print("caching")
+        recipes = Recipe.objects.all()  # type: ignore
+        cache.set("recipes", recipes, timeout=CACHE_TTL)
+    return recipes
+
+```
+
 
