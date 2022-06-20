@@ -294,8 +294,8 @@ Uygulamada 2 ana uç nokta bulunmaktadır.
 
 * ``/`` cookbook verilerinin cache örneğini gösterir.
 * ``/students/`` Students tablosundaki verileri gösterir.
-* ``/students/test/`` İşlem maliyeti yüksek görevin başlatılmasını sağlayan butonu bulunduran sayfa
-
+* ``/students/test/`` İşlem maliyeti yüksek görevin başlatılmasını sağlayan butonu bulunduran sayfa.
+* ``/result/`` Uygulamada paralel çalışan görevlerin durumunu gösteren sayfa.
 * ``/django-rq/`` Arka planda çalışan görevlerin durumunun izlenebileceği uç noktayı gösterir.
 * ``/accounts/`` Uygulamadaki hesapların yönetildiği sayfayı gösterir.
 
