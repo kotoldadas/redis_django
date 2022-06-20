@@ -108,7 +108,7 @@ python manage.py loaddata cookbook
 ```
 komutu koşturulur.
 
-#Docker ile Koşturulması
+# Docker ile Koşturulması
 
 docker-compose ise şu komutların koşturulması yeterli olacaktır.
 ```
