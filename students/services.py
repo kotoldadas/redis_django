@@ -35,11 +35,14 @@ def crud(pk_user):
         sleep(0.001)
 
     channel_layer = get_channel_layer()
-    user = CustomUser.objects.get(pk=pk_user)
-    channel_name = user.channel_name
-    async_to_sync(channel_layer.send)(
-        channel_name, {"type": "success_message", "message": "task is done"}
-    )
+    user = CustomUser.objects.filter(pk=pk_user)
+
+    if user.count() > 0:
+        user = user[0]
+        channel_name = user.channel_name
+        async_to_sync(channel_layer.send)(
+            channel_name, {"type": "success_message", "message": "task is done"}
+        )
     job: Job = rq.get_current_job()
     task: Task = Task.objects.get(pk=job.id)
     task.status = task.StatusChoices.FINISHED
