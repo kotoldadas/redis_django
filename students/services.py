@@ -37,12 +37,12 @@ def crud(pk_user):
     channel_layer = get_channel_layer()
     user = CustomUser.objects.get(pk=pk_user)
     channel_name = user.channel_name
-    async_to_sync(channel_layer.send)(  # type: ignore
+    async_to_sync(channel_layer.send)(
         channel_name, {"type": "success_message", "message": "task is done"}
     )
-    job: Job = rq.get_current_job()  # type: ignore
-    task: Task = Task.objects.get(pk=job.id)  # type: ignore
-    task.status = task.StatusChoices.FINISHED  # type: ignore
+    job: Job = rq.get_current_job()
+    task: Task = Task.objects.get(pk=job.id)
+    task.status = task.StatusChoices.FINISHED
     task.save()
 
     print(f"fetched task => {task}")

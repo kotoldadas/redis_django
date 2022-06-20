@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis
+
+  web:
+    restart: always
+    image: app
+    volumes:
+      - .:/code
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - 8000:8000
+    depends_on:
+      - rq
+    links:
+      - redis
+      
+  rq:
+    build: .
+    image: app
+    command: python manage.py rqworker
+    volumes:
+      - .:/code
+    links:
+      - redis
+    depends_on:
+      - redis

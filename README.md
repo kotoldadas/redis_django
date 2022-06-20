@@ -58,6 +58,8 @@ Bu komutu koşturmadan önce kurulan sanal ortamın aktif olduğundan ve proje d
 
 ## Redis Kurulumu
 
+### Local e Yüklemek
+
 Redis i yüklemek için şu komutla koşturulur.
 
 ```
@@ -73,6 +75,12 @@ Redis yüklendikten sonra arka planda çalışması için
 
 ```
 redis-server --daemonize yes
+```
+
+### Docker ile Redis Kurulumu
+
+```
+sudo docker run --name redis_django -p 6379:6379 -d redis
 ```
 
 komutu koşturulur.
@@ -100,6 +108,12 @@ python manage.py loaddata cookbook
 ```
 komutu koşturulur.
 
+#Docker ile Koşturulması
+
+docker-compose ise şu komutların koşturulması yeterli olacaktır.
+```
+docker-compose up --build
+```
 
 # Proje Mimarisi
 
