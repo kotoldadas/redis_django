@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     "chat",  # for tutorial
     "django_rq",  # task queue feature
     "channels",  # websocket support
+    "storages",  # s3 related
+    "core",
 ]
 
 MIDDLEWARE = [
@@ -122,9 +124,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = "static/"
-
-STATICFILES_DIRS = [BASE_DIR / "staticfiles"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -135,7 +134,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379",
+        "LOCATION": "redis://127.0.0.1:6379",
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
         "KEY_PREFIX": "example",
     }
@@ -156,7 +155,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis", 6379)],
+            "hosts": [("127.0.0.1", 6379)],
         },
     },
 }
@@ -164,3 +163,35 @@ CHANNEL_LAYERS = {
 AUTH_USER_MODEL = "users.CustomUser"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+# STATIC_URL = "static/"
+
+# Aws configuration
+
+AWS_ACCESS_KEY_ID = "AKIARAXQ2NHKJU6EGZ4S"
+AWS_SECRET_ACCESS_KEY = "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"
+AWS_STORAGE_BUCKET_NAME = "redis-django"
+AWS_DEFAULT_ACL = None
+AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+
+AWS_S3_OBJECT_PARAMETERS = {
+    "CacheControl": "max-age=86400",
+}
+
+# s3 static settings
+STATIC_LOCATION = "static"
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
+STATICFILES_STORAGE = "redis_tutorial.storage_backends.StaticStorage"
+
+# s3 public media settings
+
+PUBLIC_MEDIA_LOCATION = "media"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+DEFAULT_FILE_STORAGE = (
+    "redis_tutorial.storage_backends.MediaStorage"  # <-- here is where we reference it
+)
+
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "staticfiles"),
+]

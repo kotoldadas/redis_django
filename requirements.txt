@@ -5,3 +5,5 @@ redis
 sqlparse
 channels
 channels-redis
+boto3
+django-storages

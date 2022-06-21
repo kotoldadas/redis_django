@@ -14,16 +14,11 @@ services:
       - 8000:8000
     depends_on:
       - rq
-    links:
-      - redis
-      
   rq:
     build: .
     image: app
     command: python manage.py rqworker
     volumes:
       - .:/code
-    links:
-      - redis
     depends_on:
       - redis
