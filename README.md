@@ -334,7 +334,8 @@ urlpatterns = [
     path("django-rq/", include("django_rq.urls")),
     path("accounts/", include("django.contrib.auth.urls")),
     path("core/", include("core.urls")),
-]```
+]
+```
 
 ## Websocket
 
