@@ -14,6 +14,11 @@ services:
       - 8000:8000
     depends_on:
       - rq
+
+    environment:
+      - AWS_ACCESS_KEY_ID=AKIARAXQ2NHKJU6EGZ4S
+      - AWS_SECRET_ACCESS_KEY=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
+      - AWS_STORAGE_BUCKET_NAME=redis-django
   rq:
     build: .
     image: app

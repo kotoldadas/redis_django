@@ -7,14 +7,15 @@ from redis_tutorial.settings import (
     AWS_SECRET_ACCESS_KEY,
     AWS_STORAGE_BUCKET_NAME,
 )
+
 from django.conf import settings
 from .models import Document
 import boto3
 import zipfile
 
-AWS_ACCESS_KEY_ID = getattr(settings, "AWS_ACCESS_KEY_ID", "")
-AWS_SECRET_ACCESS_KEY = getattr(settings, "AWS_SECRET_ACCESS_KEY", "")
-AWS_STORAGE_BUCKET_NAME = getattr(settings, "AWS_STORAGE_BUCKET_NAME", "")
+# AWS_ACCESS_KEY_ID = getattr(settings, "AWS_ACCESS_KEY_ID", "")
+# AWS_SECRET_ACCESS_KEY = getattr(settings, "AWS_SECRET_ACCESS_KEY", "")
+# AWS_STORAGE_BUCKET_NAME = getattr(settings, "AWS_STORAGE_BUCKET_NAME", "")
 
 # Create your views here.
 
@@ -22,7 +23,6 @@ AWS_STORAGE_BUCKET_NAME = getattr(settings, "AWS_STORAGE_BUCKET_NAME", "")
 def image_upload(request):
     if request.method == "POST":
         image_file = request.FILES["image_file"]
-        # image_type = request.POST["image_type"]
         document = Document(upload=image_file)
         document.save()
         image_url = document.upload.url
@@ -54,26 +54,25 @@ def download(request):
         )
 
     if request.method == "POST":
-
-        name = request.POST.get("folder_name").split("/")[-1]
+        # get folder name from request
+        folder_name = request.POST.get("folder_name")
 
         response = HttpResponse(content_type="application/zip")
-        print("---------------")
         with zipfile.ZipFile(response, "w") as zip_file:
 
             for s3_object in my_bucket.objects.all():
                 path, filename = os.path.split(s3_object.key)
-                l = path.split("/")[-1]
-                # if str(path).startswith("med"):
-                if name in l:
 
-                    print(f"path => {path} - filename => {filename} ")
-                    buf = io.BytesIO()
-                    print(f"downloaded file => {buf}")
-                    my_bucket.download_fileobj(s3_object.key, buf)
-                    zip_file.writestr(filename, buf.getvalue())
+                if folder_name == path:
+                    # create buffer to append file to zip
+                    buffer = io.BytesIO()
+                    # download file from s3 to buffer
+                    my_bucket.download_fileobj(s3_object.key, buffer)
+                    # append buffer to zip
+                    zip_file.writestr(filename, buffer.getvalue())
 
         response["Content-Disposition"] = f"attachment; filename=result.zip"
-        print("---------------")
 
         return response
+
+    return redirect("main")
