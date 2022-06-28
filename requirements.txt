@@ -7,3 +7,4 @@ channels
 channels-redis
 boto3
 django-storages
+gunicorn

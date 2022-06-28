@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-nl_vu^pi!dha4(z4^3-l^i_hddvq0#k*y#*6f*ncq!lbq^@w=7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -134,8 +134,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        # "LOCATION": "redis://redis:6379",
-        "LOCATION": "redis://127.0.0.1:6379",
+        "LOCATION": "redis://redis:6379",
+        # "LOCATION": "redis://127.0.0.1:6379",
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
         "KEY_PREFIX": "example",
     }
@@ -156,8 +156,8 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            # "hosts": [("redis", 6379)],
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [("redis", 6379)],
+            # "hosts": [("127.0.0.1", 6379)],
         },
     },
 }
@@ -178,7 +178,20 @@ AWS_STORAGE_BUCKET_NAME = "redis-django"
 # AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 # AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
 
-AWS_DEFAULT_ACL = None
+# AWS_AUTO_CREATE_BUCKET = True
+# AWS_QUERYSTRING_AUTH = False
+#
+#
+# # AWS cache settings, don't change unless you know what you're doing:
+# AWS_EXPIRY = 60 * 60 * 24 * 7
+#
+# # Revert the following and use str after the above-mentioned bug is fixed in
+# # either django-storage-redux or boto
+# control = "max-age=%d, s-maxage=%d, must-revalidate" % (AWS_EXPIRY, AWS_EXPIRY)
+# AWS_HEADERS = {"Cache-Control": bytes(control, encoding="latin-1")}
+#
+#
+# AWS_DEFAULT_ACL = None
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 
 AWS_S3_OBJECT_PARAMETERS = {
@@ -194,9 +207,7 @@ STATICFILES_STORAGE = "redis_tutorial.storage_backends.StaticStorage"
 
 PUBLIC_MEDIA_LOCATION = "media"
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
-DEFAULT_FILE_STORAGE = (
-    "redis_tutorial.storage_backends.MediaStorage"  # <-- here is where we reference it
-)
+DEFAULT_FILE_STORAGE = "redis_tutorial.storage_backends.MediaStorage"
 
 
 STATICFILES_DIRS = [
