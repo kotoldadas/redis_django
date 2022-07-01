@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3.3"
 
 services:
   redis:
@@ -9,8 +9,7 @@ services:
     image: app
     volumes:
       - .:/code
-    command: gunicorn redis_tutorial.wsgi:application --bind 0.0.0.0:8000
-    # command: python manage.py runserver 0.0.0.0:8000
+    command:  gunicorn redis_tutorial.wsgi:application --bind 0.0.0.0:8000
     expose:
       - 8000
     depends_on:
