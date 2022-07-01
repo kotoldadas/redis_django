@@ -8,8 +8,11 @@ WORKDIR /code
 EXPOSE 8000
 
 COPY requirements.txt /code/
+COPY docker-entrypoint.sh /code/
 
 RUN pip install -r requirements.txt
+
+RUN chmod +x docker-entrypoint.sh
 
 COPY . /code/
 
