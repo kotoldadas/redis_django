@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "channels",  # websocket support
     "storages",  # s3 related
     "core",
+    "django_elasticsearch_dsl",  # new
 ]
 
 MIDDLEWARE = [
@@ -84,11 +85,14 @@ WSGI_APPLICATION = "redis_tutorial.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": os.getenv("SQL_ENGINE"),
+        "NAME": os.getenv("SQL_DATABASE"),
+        "USER": os.getenv("SQL_USER"),
+        "PASSWORD": os.getenv("SQL_PASSWORD"),
+        "HOST": os.getenv("SQL_HOST"),
+        "PORT": os.getenv("SQL_PORT"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -141,7 +145,13 @@ CACHES = {
     }
 }
 
+
 CACHE_TTL = 60 * 15
+
+
+ELASTICSEARCH_DSL = {
+    "default": {"hosts": "search:9200"},
+}
 
 # Configuring Queues
 RQ_QUEUES = {

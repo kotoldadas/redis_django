@@ -1,7 +1,10 @@
 # Özet
-
-Bu uygulama, django nun senkron özelliğinden dolayı hesaplama maliyeti çok olan işlemlerin redisgibi araçlar yardımı ile paralel bir şekilde işlenmesini amaçlamaktadır.
-Kullanıcılar görevlerin durumunu ayrı bir sekmeden direk olarak veya konsol üzerinden websocket bağlantısı yardımı ile haberdar olabilirler.
+Bu uygulamada çeşitli teknolojilerin örnek bir django uygulamasına eklenme örneklerini içerir.
+Kullanılan teknolojiler:
+* Redis ile cache örneği
+* Websocket
+* RQ_Worker ile paralel hesaplama
+* S3 download - upload ve zipleme işlemleri
 
 <!-- # Kurulum -->
 <!---->
@@ -115,33 +118,104 @@ docker-compose ise şu komutların koşturulması yeterli olacaktır.
 docker-compose up --build
 ```
 
+Ardından admin oluşturulması için 
+```
+docker exec -it redis_django_web_1 bash
+```
+
+komutu ile docker container ına bağlanılır. 
+
+```
+python manage.py createsuperuser
+```
+
+komutu ile admin oluşturulur.
+
 # Proje Mimarisi
 
 ```
-project
-│
-└─── chat                               -- Websocket konfigürasyon dosyalarının bulunduğu klasör
-│
-└─── cookbook                           -- cache örneği için oluşturulan model ve view kodlarının bulunduğu klasör
-│
-└─── redis_tutorial                     -- Uygulamanın asıl ayarlarının bulunduğu klasör
-│
-└─── staticfiles                        -- Sunucudaki static dosyaların (css, javascript, fonts vb) bulunduğu klasör
-│    │
-│    └─── css                           
-│    └─── fonts                          
-│    └─── js                            
-│
-└─── students                           -- Maliyeti yüksek bir işlemi simule etmek için oluşturulan model ve fonksiyonların bulunduğu klasör
-│
-└─── templates                          -- html uzantılı dosyaların bulunduğu klasör
-│
-└─── users                              -- CustomUser modelinin ve Task modelinin bulunduğu klasör
-│
-│   README.md                           -- Uygulama dökümanasyonunun bulunduğu dosya
-│   requirements.txt                    -- Gerekli kütüphaneleri belirtildiği dosya
-│   manage.py                           -- Sunucuyu ayağa kaldırma vs gibi yardımcı fonksiyonları barındıran ana script
-│   .gitignore                          -- git tarafından takip edilmemesi istenen dosya ve klasörlerin belirtildiği dosya
+.
+├── Dockerfile
+├── README.md                            -- Uygulama dökümanasyonunun bulunduğu dosya
+├── chat                                 -- Websocket konfigürasyon dosyalarının bulunduğu klasör
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── consumer.py
+│   ├── models.py
+│   ├── routing.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+├── cookbook                             -- cache örneği için oluşturulan model ve view kodlarının bulunduğu klasör
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── services.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+├── cookbook.json
+├── core
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+├── db.sqlite3
+├── docker-compose.yml
+├── docker-entrypoint.sh
+├── dump.rdb
+├── manage.py                            -- Sunucuyu ayağa kaldırma vs gibi yardımcı fonksiyonları barındıran ana script
+├── nginx                                -- nginx configürasyon ve docker dosyalarının bulunduğu klasör
+│   ├── Dockerfile
+│   └── docking_django.conf
+├── redis_tutorial                       -- Uygulamanın asıl ayarlarının bulunduğu klasör
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── storage_backends.py
+│   ├── urls.py
+│   └── wsgi.py
+├── requirements.txt                     -- Gerekli kütüphaneleri belirtildiği dosya
+├── staticfiles                          -- Sunucudaki static dosyaların (css, javascript, fonts vb) bulunduğu klasör
+├── students                             -- Maliyeti yüksek bir işlemi simule etmek için oluşturulan model ve fonksiyonların bulunduğu klasör
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── documents.py
+│   ├── models.py
+│   ├── services.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+├── templates                            -- html uzantılı dosyaların bulunduğu klasör
+│   ├── base.html
+│   ├── download.html
+│   ├── index.html
+│   ├── partials
+│   │   ├── footer.html
+│   │   └── header.html
+│   ├── registration
+│   │   └── login.html
+│   ├── result.html
+│   ├── students.html
+│   ├── success.html
+│   ├── test.html
+│   ├── tmp.html
+│   └── upload.html
+└── users                                -- CustomUser modelinin ve Task modelinin bulunduğu klasör
+    ├── __init__.py
+    ├── admin.py
+    ├── apps.py
+    ├── manager.py
+    ├── models.py
+    ├── tests.py
+    ├── urls.py
+    └── views.py
 ```
 
 # Modeller
@@ -226,9 +300,8 @@ class Ingredient(models.Model):
 
 ## Student
 
-UserAnswer modeli kullanıcıyı sorulan sorular sonucunda verdiği cevapları temsil eder.
 Student modeli uygulama içindeki işlem maliyeti yüksek bir işlemi simule etmek için oluşturulmuştur.
-Bu işlemde 1000 tane rastgele Student objesi oluşturulur.
+Bu işlemde 10000 tane rastgele Student objesi oluşturulur.
 Ardından bu objelerin id leri listede tutulur. 
 Listedeki id ler döngü ile dönülerek her bir Student objesi veritabanından bulunur ve silinir.
 
@@ -236,10 +309,13 @@ Listedeki id ler döngü ile dönülerek her bir Student objesi veritabanından 
 class Student(models.Model):
     first_name = models.CharField(max_length=30, verbose_name="İsim")
     last_name = models.CharField(max_length=30, verbose_name="Soy İsim")
+    email = models.EmailField(
+        max_length=254, verbose_name="email", default="default@test.com"
+    )
     age = models.IntegerField(verbose_name="Yaş")
 
     def __str__(self):
-        return f"name => {self.first_name} - last name => {self.last_name} - age => {self.age}"
+        return f"name => {self.first_name}\nlast name => {self.last_name}\nage => {self.age}\nemail => {self.email}"
 ```
 
 ## Task
@@ -314,11 +390,11 @@ class Document(models.Model):
 # Uç Noktalar
 
 ## Sayfalar
-Uygulamada 2 ana uç nokta bulunmaktadır.
 
 * ``/`` cookbook verilerinin cache örneğini gösterir.
 * ``/students/`` Students tablosundaki verileri gösterir.
 * ``/students/test/`` İşlem maliyeti yüksek görevin başlatılmasını sağlayan butonu bulunduran sayfa.
+* ``/students/test/search/<name:str>`` Öğrenci modelinde arama yapılmasını sağlayan uç nokta.
 * ``/result/`` Uygulamada paralel çalışan görevlerin durumunu gösteren sayfa.
 * ``/django-rq/`` Arka planda çalışan görevlerin durumunun izlenebileceği uç noktayı gösterir.
 * ``/accounts/`` Uygulamadaki hesapların yönetildiği sayfayı gösterir.
@@ -353,47 +429,29 @@ websocket_urlpatterns = [
 ## Maliyeti Yüksek Fonskiyon
 
 ```
+from faker import Faker
+
 def crud(pk_user):
     # delete all
     Student.objects.all().delete()  # type: ignore
     l = []
+    fake = Faker()
 
     # save
-    letters = string.ascii_lowercase
-    for _ in range(1000):
-        name = "".join(random.choice(letters) for _ in range(random.randint(4, 10)))
-        last_name = "".join(
-            random.choice(letters) for _ in range(random.randint(4, 10))
-        )
+    for _ in range(10000):
+        # name = "".join(random.choice(letters) for _ in range(random.randint(10, 30)))
+        # last_name = "".join(
+        #     random.choice(letters) for _ in range(random.randint(10, 30))
+        # )
+        name = fake.first_name()
+        last_name = fake.last_name()
+        email = fake.email()
         age = random.randint(15, 70)
-        student = Student(first_name=name, last_name=last_name, age=age)
+        student = Student(first_name=name, last_name=last_name, age=age, email=email)
         student.save()
         l.append(student.pk)
         print(f"{student} saved")
         sleep(0.001)
-
-    for pk in l:
-        s = Student.objects.get(pk=pk)  # type: ignore
-        s.delete()
-        print(f"{s} deleted")
-        sleep(0.001)
-
-    channel_layer = get_channel_layer()
-    user = CustomUser.objects.get(pk=pk_user)
-    channel_name = user.channel_name
-    async_to_sync(channel_layer.send)(  # type: ignore
-        channel_name, {"type": "success_message", "message": "task is done"}
-    )
-    job: Job = rq.get_current_job()  # type: ignore
-    task: Task = Task.objects.get(pk=job.id)  # type: ignore
-    task.status = task.StatusChoices.FINISHED  # type: ignore
-    task.save()
-
-    print(f"fetched task => {task}")
-    print(f"current job => {job}")
-    print(f"user => {user}")
-
-    return f"{user} - {job} - {task}"
 ```
 
 ## Websocket Ayarları
@@ -561,4 +619,88 @@ def download(request):
         return response
 
     return redirect("main")
+```
+
+## Elasticsearch Ayarları
+
+Elasticsearch yazılımını django uygulamamızda kullanabilmek için _settings.py_ dosyasına 
+```
+ELASTICSEARCH_DSL = {
+    "default": {"hosts": "search:9200"},
+}
+```
+ayarları girilir. Burada _search:9200_ kısmındaki _search_ kısmı host u belirtir. Uygulama docker-compose ile ayağa kaldırıldığı için ve Elasticsearch 'search' ismi ile ayarlandığı için _search_ oolarak girilmiştir. _9200_ kısmı ise Elasticsearch yazılımının hangi portta çalıştığını belirtir.
+
+Students modelinde arama yapmak için şu kod parçaları yazılmıştır.
+
+```
+@registry.register_document
+class StudentDocument(Document):
+    class Index:
+
+        name = "students"
+
+        settings = {"number_of_shards": 1, "number_of_replicas": 0}
+
+    class Django:
+        model = Student
+
+        fields = ["first_name", "last_name", "email"]
+
+```
+
+fields bölümünde modeldeki hangi alanlarda arama yapılacağı ve arama sonucunda ortaya çıkan dökümanlarda hangi alanların bulunacağı belirtilir.
+
+### Arama Örneği
+
+```
+def search(req, name):
+    q = Q(
+        "multi_match",
+        query=str(name),
+        fields=["first_name", "last_name", "email"],
+        fuzziness="auto",
+    )
+    response = StudentDocument.search().query(q).execute()
+
+    data = {
+        "success": response.success(),
+        "students": [(s.first_name, s.last_name, s.email) for s in response],
+    }
+    return JsonResponse(data)
+```
+_search_ view fonksiyonu `path("search/<name>", search, name="search"),` uçnoktasına eklenmiştir.
+Bu fonksiyonu kullanmak için uç noktaya `fetch` yardımı ile istek atılır.
+    
+
+```
+    let tbl = document.getElementById("table")
+    let input = document.getElementById("input")
+
+    const addElements = (data) => {
+        tbl.innerHTML = "";
+        const success = data["success"]
+        if (!success) {
+            alert("wrong query!!")
+            return
+        }
+        const arr = data["students"]
+
+        for (let i = 0; i < arr.length; i++) {
+            tbl.innerHTML += `
+        <tr>
+           <td>name => ${arr[i][0]} || </td>
+           <td>lastname =>${arr[i][1]} || </td>
+           <td> email => ${arr[i][2]}</td>
+        </tr>`
+        }
+    }
+    input.addEventListener("keyup", () => {
+        if (input.value.length > 3) {
+            fetch(`/students/search/${input.value}`).then(data => data.json()).then(addElements).catch(err => alert(err))
+        } else {
+            tbl.innerHTML = ""
+        }
+    })
+
 ```

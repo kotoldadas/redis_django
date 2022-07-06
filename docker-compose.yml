@@ -3,21 +3,32 @@ version: "3.3"
 services:
   redis:
     image: redis
+    logging:
+      driver: none
 
   web:
     restart: always
     image: app
     volumes:
       - .:/code
-    # command:  gunicorn redis_tutorial.wsgi:application --bind 0.0.0.0:8000
-    command:  ./docker-entrypoint.sh
+    command: ./docker-entrypoint.sh
     depends_on:
+      - search
       - rq
+      - db
 
     environment:
       - AWS_ACCESS_KEY_ID=AKIARAXQ2NHKJU6EGZ4S
       - AWS_SECRET_ACCESS_KEY=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
       - AWS_STORAGE_BUCKET_NAME=redis-django
+
+      - SQL_ENGINE=django.db.backends.postgresql
+      - SQL_DATABASE=perusable
+      - SQL_USER=perusable
+      - SQL_PASSWORD=perusable
+
+      - SQL_HOST=db
+      - SQL_PORT=5432
   rq:
     build: .
     image: app
@@ -26,6 +37,20 @@ services:
       - .:/code
     depends_on:
       - redis
+      - db
+
+    environment:
+      - AWS_ACCESS_KEY_ID=AKIARAXQ2NHKJU6EGZ4S
+      - AWS_SECRET_ACCESS_KEY=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
+      - AWS_STORAGE_BUCKET_NAME=redis-django
+
+      - SQL_ENGINE=django.db.backends.postgresql
+      - SQL_DATABASE=perusable
+      - SQL_USER=perusable
+      - SQL_PASSWORD=perusable
+
+      - SQL_HOST=db
+      - SQL_PORT=5432
 
   nginx:
     build: ./nginx
@@ -33,3 +58,21 @@ services:
       - 80:80
     depends_on:
       - web
+    logging:
+      driver: none
+
+  db:
+    image: postgres:14.1
+    environment:
+      - POSTGRES_DB=perusable
+      - POSTGRES_USER=perusable
+      - POSTGRES_PASSWORD=perusable
+  search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+      - 9300:9300
+    logging:
+      driver: none

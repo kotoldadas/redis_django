@@ -1,9 +1,42 @@
 {% extends "base.html" %} {% block content %}
-  
-    {% for student in students %}
-    <h1>{{ student.first_name }}</h1>
-    <h2>{{student.last_name}}</h2>
-    <h3>{{student.age}}</h3>
-    {% endfor %}
+{% load static %} {% load i18n %}
+
+<input id="input" type="text" name="text" value="deneme">
+
+<table id="table">
+</table>
+
+<script>
+
+    let tbl = document.getElementById("table")
+    let input = document.getElementById("input")
+
+    const addElements = (data) => {
+        tbl.innerHTML = "";
+        const success = data["success"]
+        if (!success) {
+            alert("wrong query!!")
+            return
+        }
+        const arr = data["students"]
+
+        for (let i = 0; i < arr.length; i++) {
+            tbl.innerHTML += `
+        <tr>
+           <td>name => ${arr[i][0]} || </td>
+           <td>lastname =>${arr[i][1]} || </td>
+           <td> email => ${arr[i][2]}</td>
+        </tr>`
+        }
+    }
+    input.addEventListener("keyup", () => {
+        if (input.value.length > 3) {
+            fetch(`/students/search/${input.value}`).then(data => data.json()).then(addElements).catch(err => alert(err))
+        } else {
+            tbl.innerHTML = ""
+        }
+    })
+</script>
+
 
 {% endblock %}
